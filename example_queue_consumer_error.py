@@ -2,6 +2,7 @@
 
 from orders_queue import OrdersQueue
 
-job = OrdersQueue()
-job.consumer_error()
+if __name__ == '__main__':
+    job = OrdersQueue()
+    job.consumer_error()
 
