@@ -10,18 +10,18 @@ class OrdersQueue(RabbitMQ):
 
     def simulate_error_processing(self):
         # demo for post queue error
-        if not msg.get('error'):
-            msg['error'] = True
-            msg['retry'] += 1
-            self.post_msg_queue_error_delay(msg, 10000) # 10 sec for qa, default 10 minutes
+        if not self.msg.get('error'):
+            self.msg['error'] = True
+            self.msg['retry'] += 1
+            self.post_msg_queue_error_delay(self.msg, 10000) # 10 sec for qa, default 10 minutes
             print(" [x] Schedule job at queue error delay 10s")
-        elif msg.get('retry') >= 5:
+        elif self.msg.get('retry') >= 5:
             # imp`lement: save on database
             # send alert of error???
             print(' [x] Finish: Maximum attempts reached')
         else:
-            msg['retry'] += 1
-            self.post_msg_queue_error_delay(msg, time_delay=60000) # 1m for qa, default 30 minutes
+            self.msg['retry'] += 1
+            self.post_msg_queue_error_delay(self.msg, time_delay=60000) # 1m for qa, default 30 minutes
             print(" [x] Schedule job at queue error delay 1m")
 
 
@@ -37,7 +37,7 @@ class OrdersQueue(RabbitMQ):
         #
 
         #simulate error delay
-        if msg.get('job_id') >= 7000000:
+        if self.msg.get('job_id') >= 7000000:
             error = self.simulate_error_processing()
 
         # release job from queue
