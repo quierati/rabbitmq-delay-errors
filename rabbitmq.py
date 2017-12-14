@@ -1,9 +1,9 @@
 import abc
 import six
 import json
-from collections import namedtuple
 
 import pika
+
 
 @six.add_metaclass(abc.ABCMeta)
 class RabbitMQ(object):
@@ -27,6 +27,7 @@ class RabbitMQ(object):
       self._queue_error = self._get_queue_error_name()
       self._channel_error = self._get_channel()
       self._channel_error.queue_declare(queue=self._queue_error, durable=True)
+      # bind queue error for works delay
       self._channel_error.queue_bind(exchange='amq.direct', queue=self._queue_error)
 
   def _get_channel(self):
@@ -79,10 +80,10 @@ class RabbitMQ(object):
       self._channel.basic_qos(prefetch_count=1)
       self._channel.basic_consume(self.callback, queue=self._queue)
       print(' [*] Waiting for messages. To exit press CTRL+C')
-#      try:
-      self._channel.start_consuming()
-#      except:
-#         print(' [x] Terminited consumer queue...')
+      try:
+         self._channel.start_consuming()
+      except:
+         print(' [x] Terminited consumer queue...')
 
   def consumer_error(self):
       self._channel_error.basic_qos(prefetch_count=1)
