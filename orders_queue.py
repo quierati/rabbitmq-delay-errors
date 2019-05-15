@@ -4,6 +4,9 @@ from rabbitmq import RabbitMQ
 
 
 class OrdersQueue(RabbitMQ):
+    MIN_TTL_DELAY = 10000
+    MAX_TTL_DELAY = 60000
+
     def __init__(self, queue='orders'):
         self.msg = {}
         super(OrdersQueue, self).__init__(queue)
@@ -13,21 +16,24 @@ class OrdersQueue(RabbitMQ):
         if not self.msg.get('error'):
             self.msg['error'] = True
             self.msg['retry'] += 1
-            self.post_msg_queue_error_delay(self.msg, 10000) # 10 sec for qa, default 10 minutes
+            self.send_msg_queue_error_delay(self.msg, self.MIN_TTL_DELAY) # 10 sec for qa, default 10 minutes
             print(" [x] Schedule job at queue error delay 10s")
         elif self.msg.get('retry') >= 5:
-            # imp`lement: save on database
+            # implement: save on database
             # send alert of error???
             print(' [x] Finish: Maximum attempts reached')
         else:
             self.msg['retry'] += 1
-            self.post_msg_queue_error_delay(self.msg, time_delay=60000) # 1m for qa, default 30 minutes
+            self.send_msg_queue_error_delay(self.msg, time_delay=self.MAX_TTL_DELAY) # 1m for qa, default 30 minutes
             print(" [x] Schedule job at queue error delay 1m")
 
 
     def callback(self, ch, method, properties, body):
         #load message as object
         self.msg = json.loads(body)
+        print(ch)
+        print(method)
+        print(properties)
         print(" [*] Initializing job processing...")
         print(" [x] Received job: %r" % body)
 

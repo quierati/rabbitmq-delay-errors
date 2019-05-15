@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 import random
+from datetime import datetime
 
 from orders_queue import OrdersQueue
 
@@ -13,7 +14,7 @@ if __name__ == '__main__':
         order_id = random.randint(1000000, 9999999)
 
         # template create msg
-        msg = {'job_type': 'orders', 'job_id': order_id, 'created_at': '2017-01-01 00:00:00', 'error': False, 'retry': 0, 'force': False}
+        msg = {'job_type': 'orders', 'job_id': order_id, 'created_at': datetime.utcnow().isoformat(), 'error': False, 'retry': 0, 'force': False}
 
         # send msg to queue
         job.post_msg(msg)
