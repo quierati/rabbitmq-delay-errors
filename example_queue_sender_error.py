@@ -19,4 +19,4 @@ if __name__ == '__main__':
         msg = {'job_type': 'orders', 'job_id': order_id, 'created_at': datetime.utcnow().isoformat(), 'error': True, 'retry': 0, 'force': False}
 
         # send job queue delay
-        job.send_msg_queue_error_delay(msg, job.MIN_TTL_DELAY)  # delay 10sec
+        job.send_msg_queue_error_delay(msg)  # delay 10sec
