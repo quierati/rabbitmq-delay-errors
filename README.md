@@ -21,4 +21,3 @@ python example_queue_consumer.py
 python example_queue_consumer_error.py
 ```
 
-
